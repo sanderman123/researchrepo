@@ -26,7 +26,7 @@
 #import "PassThroughViewController.h"
 
 @interface PassThroughViewController (){
-  TPCircularBuffer _circularBuffer;
+//  TPCircularBuffer _circularBuffer;
 }
 @end
 
@@ -71,7 +71,7 @@
   /**
    Initialize the circular buffer
    */
-  [EZAudio circularBuffer:&_circularBuffer withSize:2048];
+//  [EZAudio circularBuffer:&_circularBuffer withSize:2048];
 }
 
 #pragma mark - Customize the Audio Plot
@@ -98,11 +98,11 @@
   
   /**
    Start the output
-   */
-  [[EZOutput sharedOutput] setAudioStreamBasicDescription:[EZMicrophone sharedMicrophone].audioStreamBasicDescription];
-  [EZOutput sharedOutput].outputDataSource = self;
-  [[EZOutput sharedOutput] startPlayback];
-    
+//   */
+//  [[EZOutput sharedOutput] setAudioStreamBasicDescription:[EZMicrophone sharedMicrophone].audioStreamBasicDescription];
+//  [EZOutput sharedOutput].outputDataSource = self;
+//  [[EZOutput sharedOutput] startPlayback];
+//    
 //    //Set the recorder
 //    recorder = [EZRecorder recorderWithDestinationURL:
 //                [NSURL fileURLWithPath:kAudioFilePath]
@@ -239,14 +239,14 @@ withNumberOfChannels:(UInt32)numberOfChannels {
     
 }
 
-#pragma mark - EZOutputDataSource
--(TPCircularBuffer *)outputShouldUseCircularBuffer:(EZOutput *)output {
-  return [EZMicrophone sharedMicrophone].microphoneOn ? &_circularBuffer : nil;
-}
+//#pragma mark - EZOutputDataSource
+//-(TPCircularBuffer *)outputShouldUseCircularBuffer:(EZOutput *)output {
+//  return [EZMicrophone sharedMicrophone].microphoneOn ? &_circularBuffer : nil;
+//}
 
 #pragma mark - Cleanup
 -(void)dealloc {
-  [EZAudio freeCircularBuffer:&_circularBuffer];
+//  [EZAudio freeCircularBuffer:&_circularBuffer];
 }
 
 - (NSData *)encodeAudioBufferList:(AudioBufferList *)abl {
