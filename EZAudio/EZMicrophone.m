@@ -305,7 +305,7 @@ static OSStatus inputCallback(void                          *inRefCon,
   _deviceSampleRate = [self _configureDeviceSampleRateWithDefault:44100.0];
   
   // Configure device and pull hardware specific buffer duration (default = 0.0232)
-  _deviceBufferDuration = [self _configureDeviceBufferDurationWithDefault:0.0232];
+  _deviceBufferDuration = [self _configureDeviceBufferDurationWithDefault:0.003]; //originally was 0.0232
   
   // Configure the stream format with the hardware sample rate
   [self _configureStreamFormatWithSampleRate:_deviceSampleRate];
@@ -490,6 +490,22 @@ static OSStatus inputCallback(void                          *inRefCon,
 -(UInt32)_getBufferFrameSize {
   UInt32 bufferFrameSize;
   UInt32 propSize = sizeof(bufferFrameSize);
+    
+  //Modification made on november 8 2014     ( size      length     frame  )
+  bufferFrameSize = 128;
+    
+  [EZAudio checkResult:AudioUnitSetProperty(microphoneInput,
+                                            #if TARGET_OS_IPHONE
+                                              kAudioUnitProperty_MaximumFramesPerSlice,
+                                            #elif TARGET_OS_MAC
+                                              kAudioDevicePropertyBufferFrameSize,
+                                            #endif
+                                              kAudioUnitScope_Global,
+                                              kEZAudioMicrophoneOutputBus,
+                                              &bufferFrameSize,
+                                              propSize)
+               operation:"Failed to SET buffer frame size"];
+    
   [EZAudio checkResult:AudioUnitGetProperty(microphoneInput,
                                             #if TARGET_OS_IPHONE
                                               kAudioUnitProperty_MaximumFramesPerSlice,

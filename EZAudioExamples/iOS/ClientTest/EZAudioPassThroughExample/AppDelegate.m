@@ -43,6 +43,14 @@
    // NSLog(@"There was an error sending the audio to the speakers");
   //}
   
+   [audioSession setPreferredIOBufferDuration: 0.006 error:&err];
+    if( err ){
+        NSLog(@"There was an error creating the audio session");
+    }
+
+    NSLog(@"Preferred Buffer duration %f", audioSession.preferredIOBufferDuration);
+    NSLog(@"Buffer duration %f", audioSession.IOBufferDuration);
+    
   return YES;
 }
 							

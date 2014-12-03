@@ -55,7 +55,7 @@
   /**
    Initialize the circular buffer
    */
-    circularBufferSize = 512; //Initially it was 1024
+    circularBufferSize = 2048; //Initially it was 2048
   [EZAudio circularBuffer:&_circularBuffer
                  withSize:circularBufferSize];
   
