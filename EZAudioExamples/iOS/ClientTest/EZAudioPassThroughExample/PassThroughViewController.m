@@ -173,13 +173,37 @@ withNumberOfChannels:(UInt32)numberOfChannels {
     tag = 0;
     udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
     
+    host = _ipAddressTextField.text;
+    if ([host length] == 0)
+    {
+        NSLog(@"Error, address required");
+        return;
+    }
+    
+    port = [_portTextField.text intValue];
+    if (port <= 0 || port > 65535)
+    {
+        NSLog(@"Error, valid port required");
+        return;
+    }
+    
+    
     NSError *error = nil;
     
-    if (![udpSocket bindToPort:0 error:&error])
+    if (![udpSocket bindToPort:port error:&error])
     {
         NSLog(@"Error binding: %@", error);
         return;
     }
+    
+    //Multicast:
+    if (![udpSocket joinMulticastGroup:host error:&error])
+    {
+        NSLog(@"Error binding: %@", error);
+        return;
+    }
+    
+    
     if (![udpSocket beginReceiving:&error])
     {
         NSLog(@"Error receiving: %@", error);
@@ -191,19 +215,19 @@ withNumberOfChannels:(UInt32)numberOfChannels {
 }
 
 - (IBAction)sendButtonClicked:(id)sender {
-    NSString *host = _ipAddressTextField.text;
-    if ([host length] == 0)
-    {
-        NSLog(@"Error, address required");
-        return;
-    }
-    
-    int port = [_portTextField.text intValue];
-    if (port <= 0 || port > 65535)
-    {
-        NSLog(@"Error, valid port required");
-        return;
-    }
+//    NSString *host = _ipAddressTextField.text;
+//    if ([host length] == 0)
+//    {
+//        NSLog(@"Error, address required");
+//        return;
+//    }
+//    
+//    int port = [_portTextField.text intValue];
+//    if (port <= 0 || port > 65535)
+//    {
+//        NSLog(@"Error, valid port required");
+//        return;
+//    }
     
     NSString *msg = _messageTextField.text;
     if ([msg length] == 0)
@@ -237,11 +261,12 @@ withNumberOfChannels:(UInt32)numberOfChannels {
         [EZAudio appendDataToCircularBuffer:&_circularBuffer
                             fromAudioBufferList:bufferList];
 
-        NSString *host = nil;
-        uint16_t port = 0;
-        [GCDAsyncUdpSocket getHost:&host port:&port fromAddress:address];
+       // NSString *host = nil;
+        //uint16_t port = 0;
+       // [GCDAsyncUdpSocket getHost:&host port:&port fromAddress:address];
         
-        NSLog(@"RECV: Unknown message from: %@:%hu", host, port);
+        //NSLog(@"RECV: Unknown message from: %@:%hu", host, port);
+        NSLog(@"Data received");
     }
 }
 

@@ -35,6 +35,8 @@
     BOOL outputInitialized;
     int circularBufferSize;
     GCDAsyncUdpSocket *udpSocket;
+    NSString *host;
+    int port;
     long tag;
 }
 @property (weak, nonatomic) IBOutlet UITextField *ipAddressTextField;

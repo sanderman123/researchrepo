@@ -16,6 +16,7 @@
     UInt16 port;
     NSMutableArray *clients;
     int tag;
+    NSString *host;
 }
 
 //- (id) init;
@@ -24,6 +25,6 @@
 
 - (void) send: (NSData *) data;
 
-- (void) udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data fromAddress:(NSData *)address withFilterContext:(id)filterContext;
+//- (void) udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data fromAddress:(NSData *)address withFilterContext:(id)filterContext;
 
 @end

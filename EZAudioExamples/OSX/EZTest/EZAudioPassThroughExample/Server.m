@@ -12,6 +12,9 @@
 
 - (void) createServerOnPort: (UInt16) p {
     port = p;
+    
+    host = @"239.0.0.13";
+    
     udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
     NSError *error = [NSError alloc];
     if (![udpSocket bindToPort:port error:&error]) {
@@ -19,6 +22,21 @@
     } else {
         NSLog(@"Port binding succeeded");
     }
+    
+    //-------Multicast:
+    
+    if (![udpSocket joinMulticastGroup:host error:&error]){
+        NSLog(@"Error joining multicast group: %@", error.localizedDescription);
+    } else {
+        NSLog(@"Succesfully joined multicast group");
+    }
+    
+    if(![udpSocket enableBroadcast:YES error:&error]){
+        NSLog(@"Error enabling broadcast:%@", error.localizedDescription);
+    } else {
+        NSLog(@"Succesfully enabled broadcast");
+    }
+    //--------
     
     if (![udpSocket beginReceiving:&error]){
         NSLog(@"Error starting receiving: %@", error.localizedDescription);
@@ -33,29 +51,39 @@
 }
 
 - (void) send: (NSData *) data {
-    for (NSData *address in clients){
-        [udpSocket sendData:data toAddress:address withTimeout:-1 tag:tag];
-        tag++;
-    }
+    
+    //Unicast:
+//    for (NSData *address in clients){
+//        [udpSocket sendData:data toAddress:address withTimeout:-1 tag:tag];
+//        tag++;
+//    }
+    
+    //Multicast:
+    
+    [udpSocket sendData:data toHost:host port:port withTimeout:-1 tag:tag];
+    tag++;
+    
 }
 
-- (void) udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data fromAddress:(NSData *)address withFilterContext:(id)filterContext {
-    
-    NSLog(@"Received data with length: %lu", (unsigned long)data.length);
-    
-    NSLog(@"Data: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-    
-    BOOL known = false;
-    for (NSData *c in clients){
-        if([c isEqualToData:address]){
-            known = true;
-            break;
-        }
-    }
-    if (!known) {
-        [clients addObject:address];
-        NSLog(@"New client added: %@", address.debugDescription);
-    }
-}
+//- (void) udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data fromAddress:(NSData *)address withFilterContext:(id)filterContext {
+//
+//  //  NSLog(@"Received data with length: %lu", (unsigned long)data.length);
+//        
+//    NSLog(@"Data: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+//    
+//    
+////    Unicast:
+////    BOOL known = false;
+////    for (NSData *c in clients){
+////        if([c isEqualToData:address]){
+////            known = true;
+////            break;
+////        }
+////    }
+////    if (!known) {
+////        [clients addObject:address];
+////        NSLog(@"New client added: %@", address.debugDescription);
+////    }
+//}
 
 @end

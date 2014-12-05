@@ -141,6 +141,8 @@
 
 - (IBAction)startServerButtonClicked:(id)sender {
     server = [[Server alloc] init];
+    
+    //21369 or 0
     [server createServerOnPort:[portTextField intValue]];
     serverStarted = true;
 }
